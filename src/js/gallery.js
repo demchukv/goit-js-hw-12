@@ -4,6 +4,8 @@ import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 import alertImg from "/img/alert.svg";
 
+const axios = require('axios/dist/node/axios.cjs');
+
 const url = "https://pixabay.com/api/";
 const searchParams = {
     key: "40878457-91c7c8077e8a58c5727309d44",
