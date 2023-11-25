@@ -3,8 +3,7 @@ import "izitoast/dist/css/iziToast.min.css";
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 import alertImg from "/img/alert.svg";
-
-const axios = require('axios/dist/node/axios.cjs');
+import axios from "axios";
 
 const url = "https://pixabay.com/api/";
 const searchParams = {
@@ -13,12 +12,14 @@ const searchParams = {
     image_type: 'photo',
     orientation: 'horizontal',
     safesearch: true,
-    per_page: 18,
+    per_page: 40,
+    page: 1,
 };
 
 const form = document.querySelector('.form');
 const searchTerm = document.querySelector('.searchTerm');
 const searchPhotosBtn = document.querySelector(".search-btn");
+const getMoreBtn = document.querySelector(".get-more-btn");
 const loader = document.querySelector('.loader');
 const gallery = document.querySelector(".gallery");
 
@@ -34,23 +35,28 @@ form.addEventListener("submit", (event) => {
         showAlert("Please, enter search term!");
         return;
     }
-    fetchPhotos()
-    .then((photos) => renderPhotos(photos))
-    .catch((error) => showAlert(error.toString()));
-});
-
-function fetchPhotos() {
     gallery.innerHTML = '';
     showLoader(true);
     searchParams.q = searchTerm.value.trim();
-    const searchParamsString = new URLSearchParams(searchParams);
-    return fetch(`${url}?${searchParamsString}`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(response.status);
-            }
-            return response.json();
-        });
+    searchParams.page = 1;
+    fetchPhotos();
+});
+
+getMoreBtn.addEventListener("click", () => {
+    searchParams.page += 1;
+    showLoader(true);
+    fetchPhotos();
+})
+
+async function fetchPhotos() {
+  try {
+    const response = await axios.get(url, { params: searchParams });
+      console.log(response);
+      renderPhotos(response.data);
+  } catch (error) {
+      showAlert(error.toString());
+      showLoader(false);
+  }
 }
 
 function renderPhotos(photos) {
@@ -73,7 +79,18 @@ function renderPhotos(photos) {
         .join("");
     showLoader(false);
     gallery.insertAdjacentHTML("beforeend", markup);
+    if (searchParams.page === 1) {
+        getMoreBtn.style.display = 'block';
+    }        
+    if (Math.ceil(photos.totalHits / searchParams.per_page) === searchParams.page) {
+        getMoreBtn.style.display = 'none';
+        showAlert("We're sorry, but you've reached the end of search results.");
+    }
     simpleGallery.refresh();
+    if (searchParams.page > 1) {
+        const rect = document.querySelector(".gallery-link").getBoundingClientRect();
+        window.scrollBy({ top: rect.height * 2, left: 0, behavior: "smooth" });
+    }
 }
 
 function showLoader(state = true) {
@@ -83,7 +100,7 @@ function showLoader(state = true) {
 
 function showAlert(msg) {
     iziToast.show({
-        position: 'topCenter',
+        position: 'center',
         iconUrl: alertImg,
         messageColor: '#FAFAFB',
         messageSize: '16px',

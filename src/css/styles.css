@@ -123,7 +123,10 @@ button:disabled {
   color: #989898;
   background: #cfcfcf;
 }
-
+.get-more-btn {
+  display: none;
+  margin: 12px auto;
+}
 /* Loader styles */
 .loader {
   width: 100%;
