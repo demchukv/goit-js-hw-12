@@ -8,6 +8,14 @@ import axios from "axios";
 const form = document.querySelector('.form');
 const getMoreBtn = document.querySelector(".get-more-btn");
 
+const selectors = {
+    searchBtn: ".search-btn",
+    searchTerm: ".searchTerm",
+    loader: ".loader",
+    gallery: ".gallery",
+    galLink: ".gallery-link",
+};
+
 const photoLoader = {
     url: "https://pixabay.com/api/",
     searchParams: {
@@ -19,12 +27,12 @@ const photoLoader = {
         per_page: 40,
         page: 1,
     },
-    searchPhotosBtn: document.querySelector(".search-btn"),
-    searchTerm: document.querySelector('.searchTerm'),
-    loader: document.querySelector('.loader'),
-    gallery: document.querySelector(".gallery"),
+    searchPhotosBtn: document.querySelector(selectors.searchBtn),
+    searchTerm: document.querySelector(selectors.searchTerm),
+    loader: document.querySelector(selectors.loader),
+    gallery: document.querySelector(selectors.gallery),
 
-    simpleGallery: new SimpleLightbox('.gallery a', {
+    simpleGallery: new SimpleLightbox(selectors.gallery + ' a', {
         overlayOpacity: 0.8,
         captionsData: 'alt',
         captionDelay: 250,
@@ -65,7 +73,6 @@ const photoLoader = {
                 </a>`;
             })
             .join("");
-        this.showLoader(false);
         this.gallery.insertAdjacentHTML("beforeend", markup);
 
         if (this.searchParams.page === 1 && photos.totalHits > 1) {
@@ -76,8 +83,12 @@ const photoLoader = {
             this.showAlert("We're sorry, but you've reached the end of search results.");
         }
         this.simpleGallery.refresh();
+        this.scrollTop();
+    },
+
+    scrollTop() {
         if (this.searchParams.page > 1) {
-            const rect = document.querySelector(".gallery-link").getBoundingClientRect();
+            const rect = document.querySelector(selectors.galLink).getBoundingClientRect();
             window.scrollBy({ top: rect.height * 2, left: 0, behavior: "smooth" });
         }
     },
@@ -107,8 +118,8 @@ const photoLoader = {
             this.renderPhotos(await response.data);
         } catch (error) {
             this.showAlert(error.message);
-            this.showLoader(false);
         }
+        this.showLoader(false);
     }
 
 }
