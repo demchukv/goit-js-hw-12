@@ -8,14 +8,6 @@ import axios from "axios";
 const form = document.querySelector('.form');
 const getMoreBtn = document.querySelector(".get-more-btn");
 
-const selectors = {
-    searchBtn: ".search-btn",
-    searchTerm: ".searchTerm",
-    loader: ".loader",
-    gallery: ".gallery",
-    galLink: ".gallery-link",
-};
-
 const photoLoader = {
     url: "https://pixabay.com/api/",
     searchParams: {
@@ -27,12 +19,12 @@ const photoLoader = {
         per_page: 40,
         page: 1,
     },
-    searchPhotosBtn: document.querySelector(selectors.searchBtn),
-    searchTerm: document.querySelector(selectors.searchTerm),
-    loader: document.querySelector(selectors.loader),
-    gallery: document.querySelector(selectors.gallery),
+    searchPhotosBtn: document.querySelector(".search-btn"),
+    searchTerm: document.querySelector(".searchTerm"),
+    loader: document.querySelector(".loader"),
+    gallery: document.querySelector(".gallery"),
 
-    simpleGallery: new SimpleLightbox(selectors.gallery + ' a', {
+    simpleGallery: new SimpleLightbox(".gallery a", {
         overlayOpacity: 0.8,
         captionsData: 'alt',
         captionDelay: 250,
@@ -88,7 +80,7 @@ const photoLoader = {
 
     scrollTop() {
         if (this.searchParams.page > 1) {
-            const rect = document.querySelector(selectors.galLink).getBoundingClientRect();
+            const rect = document.querySelector(".gallery-link").getBoundingClientRect();
             window.scrollBy({ top: rect.height * 2, left: 0, behavior: "smooth" });
         }
     },
