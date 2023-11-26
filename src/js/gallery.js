@@ -51,10 +51,9 @@ getMoreBtn.addEventListener("click", () => {
 async function fetchPhotos() {
   try {
     const response = await axios.get(url, { params: searchParams });
-      console.log(response);
-      renderPhotos(response.data);
+      renderPhotos(await response.data);
   } catch (error) {
-      showAlert(error.toString());
+      showAlert(error.message);
       showLoader(false);
   }
 }
@@ -79,7 +78,8 @@ function renderPhotos(photos) {
         .join("");
     showLoader(false);
     gallery.insertAdjacentHTML("beforeend", markup);
-    if (searchParams.page === 1) {
+
+    if (searchParams.page === 1 && photos.totalHits > 1) {
         getMoreBtn.style.display = 'block';
     }        
     if (Math.ceil(photos.totalHits / searchParams.per_page) === searchParams.page) {
